@@ -16,21 +16,21 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${IMAGE_NAME}:latest ."
+                sh "/usr/local/bin/docker build -t ${IMAGE_NAME}:latest ."
             }
         }
 
         stage('Stop Old Container') {
             steps {
-                sh "docker stop ${CONTAINER_NAME} || true"
-                sh "docker rm ${CONTAINER_NAME} || true"
+                sh "/usr/local/bin/docker stop ${CONTAINER_NAME} || true"
+                sh "/usr/local/bin/docker rm ${CONTAINER_NAME} || true"
             }
         }
 
         stage('Run Container') {
             steps {
                 sh """
-                docker run -d \
+                /usr/local/bin/docker run -d \
                 --name ${CONTAINER_NAME} \
                 -p 5000:5000 \
                 ${IMAGE_NAME}:latest
@@ -42,6 +42,15 @@ pipeline {
             steps {
                 sh "curl http://localhost:5000 || true"
             }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ CI/CD Pipeline executed successfully!'
+        }
+        failure {
+            echo '❌ Pipeline failed. Check logs!'
         }
     }
 }
