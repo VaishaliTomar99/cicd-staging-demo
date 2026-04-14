@@ -26,18 +26,18 @@ pipeline {
                 sh "/usr/local/bin/docker rm ${CONTAINER_NAME} || true"
             }
         }
-
         stage('Run Container') {
             steps {
                 sh """
-                /usr/local/bin/docker run -d \
+                docker rm -f ${CONTAINER_NAME} || true
+                docker run -d \
                 --name ${CONTAINER_NAME} \
-                -p 5000:5000 \
+                -p 5002:5000 \
                 ${IMAGE_NAME}:latest
                 """
             }
         }
-
+        
         stage('Test App') {
             steps {
                 sh "curl http://localhost:5000 || true"
