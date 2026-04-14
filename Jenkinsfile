@@ -20,27 +20,22 @@ pipeline {
             }
         }
 
-        stage('Stop Old Container') {
-            steps {
-                sh "/usr/local/bin/docker stop ${CONTAINER_NAME} || true"
-                sh "/usr/local/bin/docker rm ${CONTAINER_NAME} || true"
-            }
-        }
         stage('Run Container') {
             steps {
                 sh """
-                docker rm -f ${CONTAINER_NAME} || true
-                docker run -d \
-                --name ${CONTAINER_NAME} \
-                -p 5002:5000 \
+                /usr/local/bin/docker rm -f ${CONTAINER_NAME} || true
+
+                /usr/local/bin/docker run -d \\
+                --name ${CONTAINER_NAME} \\
+                -p 5002:5000 \\
                 ${IMAGE_NAME}:latest
                 """
             }
         }
-        
+
         stage('Test App') {
             steps {
-                sh "curl http://localhost:5000 || true"
+                sh "curl http://localhost:5002 || true"
             }
         }
     }
